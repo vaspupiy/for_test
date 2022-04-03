@@ -1,0 +1,78 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="main">
+        <div class="title">
+            {{ title }}
+        </div>
+
+        {% include 'mainapp/includes/inc-search-menu.html' %}
+
+        <div class="publications">
+            <div class="wrapper">
+                {% if not object_list %}
+                    <div class="not-search-title" style="margin-top: 30px; margin-left: 370px">
+                        <b>Статьи не найдены.</b> <br>
+                        Вернитесь на <a href="{% url 'main' %}" class="">главную</a>, введите другой запрос
+                        или измените настройки фильтра.
+                    </div>
+                {% else %}
+                    {% for instance_article in object_list %}
+                        <div class="publication">
+                            <div class="image">
+                                <img src={{ instance_article.main_img.url }} alt="{{ instance_article.main_img }}">
+                            </div>
+                            <div class="publicationInfo">
+                                <div class="category">
+                                    {{ instance_article.categories }}
+                                </div>
+                                <div class="divider"></div>
+                                <div class="dateInfo">
+                                    <div class="icon">
+                                        <img src={% static 'img/Calendar.png' %} alt="Calendar">
+                                    </div>
+                                    <div class="date">
+                                        {{ instance_article.created_timestamp|date:"d.m.Y" }}
+                                    </div>
+                                </div>
+                                <div class="divider"></div>
+                                <div class="likeCount">
+                                    <div class="icon">
+                                        <img src={% static 'img/rating.png' %} alt="like">
+                                    </div>
+                                    <div class="number_rating">
+                                        {% if not instance_article.get_rating_by_article_id %}
+                                            0
+                                        {% else %}
+                                            {{ instance_article.get_rating_by_article_id }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="title">
+                                {{ instance_article.title }}
+                            </div>
+                            <div class="descrition">
+                                {{ instance_article.subtitle }}
+                            </div>
+                            <div class="continue ">
+                                <div class="text">
+                                    Читать далее
+                                </div>
+                                <div class="icon">
+                                    <a href="{% url 'article' instance_article.pk %}"><img
+                                            src={% static 'img/Right.png' %} alt="right"></a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% if object_list %}
+                {% include 'mainapp/includes/inc-pagination.html' %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,16 @@
+default:
+  SECRET_KEY: ''
+  ALLOWED_HOSTS:
+    - '*'
+  DEBUG: True
+  DATABASES:
+    default:
+      ENGINE: django.db.backends.sqlite3
+      NAME: db.sqlite3
+
+production:
+  DEBUG: False
+  SESSION_COOKIE_HTTPONLY: True
+  SESSION_COOKIE_SECURE: True
+  CSRF_COOKIE_SECURE: True
+  CSRF_TRUSTED_ORIGINS:  ['https://*.geek-habr.ru','https://*.127.0.0.1']

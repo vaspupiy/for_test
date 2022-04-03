@@ -1,0 +1,158 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="main">
+        <div class="subNavbarLK">
+            {% include 'mainapp/includes/inc-submenu_lk.html' %}
+        </div>
+        <div class="contentArticle">
+            <div class="myArticles">
+                {% if user.is_authenticated %}
+                    {% if not object_list %}
+                        <div class="titleArticleAdd">
+                            У Вас пока нет статей
+                        </div>
+                    {% elif user  == object_list.0.user %}
+                        <div class="main">
+                            <div class="title">
+                                Мои публикации
+                            </div>
+                            <div class="publications">
+                                <div class="my-article-wrapper">
+                                    {% for instance_article in object_list %}
+                                        <div class="article-box">
+
+                                            <div class="article-tags">
+                                                <div {% if instance_article.status == 'D' %}
+                                                    style="background-color: #9A9CA5;"
+                                                {% endif %}
+                                                {% if instance_article.is_for_re_moderation %}
+                                                    class="status">Модерация</div>
+                                                {% else %}
+                                                    class="status">{{ instance_article.get_status_display }}</div>
+                                                {% endif %}
+<!--                                                    class="status">{{ instance_article.get_status_display }}</div>-->
+
+                                                <div class="category">{{ instance_article.categories }}</div>
+                                            </div>
+
+
+                                            <div class="info-block">
+                                                <div class="info">{{ instance_article.created_timestamp | date:"d.m.Y" }}</div>
+                                                <div class="info"><img
+                                                        src={% static "img/like.png" %}> {{ instance_article.likes.count }}
+                                                </div>
+                                                <div class="info"><img
+                                                        src={% static "img/comment.png" %}> {{ instance_article.get_comment_count_by_article_id }}
+                                                </div>
+                                                <div class="info"><img src={% static 'img/rating.png' %} alt="like">
+                                                    {% if not instance_article.get_rating_by_article_id %}
+                                                        0
+                                                    {% else %}
+                                                        {{ instance_article.get_rating_by_article_id }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="article-title">{{ instance_article.title }}</div>
+                                            <div class="article-prewiev">{{ instance_article.subtitle }}</div>
+                                            <div class="button-box">
+                                                {% if not instance_article.is_for_re_moderation %}
+                                                <a class="article-button"
+                                                   href="{% url 'article_update' instance_article.pk %}">Редактировать</a>
+
+                                                {% if instance_article.status == 'D' and not instance_article.is_for_correction %}
+                                                    <form method="post"
+                                                          action="{% url 'article_status_update' instance_article.pk %}">
+                                                        {% csrf_token %}
+                                                        <input hidden="true" name="status" value="A">
+                                                        <button type="submit" class="article-button">Опубликовать
+                                                        </button>
+                                                    </form>
+                                                {% elif instance_article.is_for_correction %}
+                                                    <form method="post"
+                                                          action="{% url 'article_status_update' instance_article.pk %}">
+                                                        {% csrf_token %}
+                                                        <input hidden="true" name="status" value="A">
+                                                        <input hidden="true" name="blocked" value="True">
+                                                        <button type="submit" class="article-button">Отправить <br> на модерацию
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                                <div class="popup" onclick="myFunction('{{ instance_article.pk }}')">
+                                                    <button class="article-button"> Удалить</button>
+                                                    <span class="popuptext" id="{{ instance_article.pk }}">Вы точно хотите удалить статью?
+
+
+                                                        <div class="button-box">
+                                                            <form method="post" enctype="multipart/form-data"
+                                                                  action="{% url 'article_status_update' instance_article.pk %}">
+                                                            {% csrf_token %}
+                                                            <input hidden="true" name="status" value="H">
+                                                            <button class="popup-button">Да</button>
+                                                        </form>
+                                                        <button class="popup-button">Нет</button>
+                                                        </div>
+
+                                                    </span>
+                                                </div>
+                                            {% else %}
+                                                <div class="reModer">
+                                                    Статья проверяется модератором
+                                                </div>
+                                            {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+
+                                </div>
+                                <div class="paginator">
+                                    {% if page_obj.has_previous %}
+                                        <div class="pagLeft">
+                                            <a href="?page={{ page_obj.previous_page_number }}"><img
+                                                    src={% static 'img/pagLeft.png' %}
+                                                            alt="left"></a>
+                                        </div>
+                                    {% endif %}
+
+                                    {% for num_page in page_obj.paginator.page_range %}
+                                        <div class="pagNum">
+                                            <a {% if num_page == page_obj.number %}
+                                                style="color: red; font-weight: bold;"
+                                            {% endif %}
+                                                href="?page={{ num_page }}">{{ num_page }}</a>
+                                        </div>
+                                    {% endfor %}
+
+                                    {% if page_obj.has_next %}
+                                        <div class="pagRight">
+                                            <a href="?page={{ page_obj.next_page_number }}"><img
+                                                    src={% static 'img/pagRight.png' %}
+                                                            alt="right"></a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="titleArticleAdd">
+                            Для просмотра статей необходимо авторизоваться как автор этих статей
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="titleArticleAdd">
+                        Для просмотра статей необходимо авторизоваться
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // When the user clicks on <div>, open the popup
+        function myFunction(id) {
+            var popup = document.getElementById(id);
+            popup.classList.toggle("show");
+        }
+    </script>
+{% endblock %}

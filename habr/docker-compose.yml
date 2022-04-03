@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  django:
+    container_name: django
+    build:
+      context: .
+    command: gunicorn habr.wsgi:application --bind 0.0.0.0:9090
+    volumes:
+      - /home/diplom/habr/static:/app/static
+      - /home/diplom/habr/media:/app/media
+    ports:
+      - 9090:9090
+    depends_on:
+      - db
+  db:
+    container_name: dev_db
+    image: postgres:12.0-alpine
+    env_file: dev.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+
+volumes:
+  postgres_data:

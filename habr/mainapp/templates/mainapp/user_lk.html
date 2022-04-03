@@ -1,0 +1,380 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="main">
+        <!--Вставка кода для кабинета-->
+        <div class="subNavbarLK">
+            {% include 'mainapp/includes/inc-submenu_lk.html' %}
+        </div>
+        <div class="contentLK">
+            <div class="mainLK">
+                <div class="titleLK">
+                    Личный кабинет {% if user.is_staff %} модератора {% endif %}
+                </div>
+                {% if user.is_staff %}
+                    <div class="moderator">
+                        <div class="requests">
+                            {% if object_list.0.get_count_new_requests_moderation %}
+                                <div class="text">
+                                    <div class="info">
+                                        Внимание! Есть новые запросы на модерацию контента:
+                                    </div>
+                                    <div class="count">
+                                        {{ object_list.0.get_count_new_requests_moderation }}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="text noRequests">
+                                    <div class="info">
+                                        Нет новых заявок на модерацию
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="new_requests">
+                        {% if object_list.0.get_count_new_requests_moderation %}
+                            <div class="requests_title">
+                                Новые запросы на модерацию
+                            </div>
+                        {% endif %}
+                        {% for notification in object_list %}
+                            {% if notification.status == 'N' %}
+                                <div class="request_wrapper">
+                                    <div class="info">
+                                        <div class="article">
+                                            Запрос на проверку статьи:
+                                            &nbsp;&nbsp; {{ notification.comment_initiator.article_comment }}
+                                        </div>
+                                        <div class="initiator">
+                                            Запрос от пользователя:
+                                            &nbsp;&nbsp; {{ notification.comment_initiator.user }}
+                                        </div>
+                                    </div>
+                                    <div class="buttons">
+                                        <div class="take">
+                                            <a href="{% url 'article' notification.comment_initiator.article_comment.pk %}">
+                                                Просмотреть статью
+                                            </a>
+                                        </div>
+                                        <div class="watch">
+                                            <a href="{% url 'moder_not_update' notification.pk %}">
+                                                Взять на модерацию
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="moderator">
+                        <div class="requests re_moder">
+                            {% if re_moderation_notifications_list.0.get_count_new_article_for_re_moderation %}
+                            <div class="text">
+                                <div class="info">
+                                    Внимание! Есть новые запросы на повторную модерацию статьи:
+                                </div>
+                                <div class="count">
+                                    {{re_moderation_notifications_list.0.get_count_new_article_for_re_moderation}}
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="text noRequests">
+                                <div class="info">
+                                    Нет новых заявок на повторную модерацию
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="new_requests re_moder">
+                        {% if re_moderation_notifications_list.0.get_count_new_article_for_re_moderation %}
+                        <div class="requests_title">
+                            Новые запросы на повторную модерацию статьи
+                        </div>
+                        {% endif %}
+                        {% for notification in re_moderation_notifications_list %}
+                        {% if notification.status == 'N' %}
+                        <div class="request_wrapper">
+                            <div class="info">
+                                <div class="article">
+                                    Запрос на проверку статьи: &nbsp;&nbsp; {{ notification.article_for_re_moderation.title }}
+                                </div>
+                                <div class="initiator">
+                                    Запрос от пользователя: &nbsp;&nbsp; {{ notification.article_for_re_moderation.user }}
+                                </div>
+                            </div>
+                            <div class="buttons">
+                                <div class="take">
+
+                                </div>
+                                <div class="watch">
+                                    <a href="{% url 'moder_not_re_mod_update' notification.pk %}">
+                                        Взять на модерацию
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    {# Возможно, вместо проверки notification.status != 'R',  #}
+                    {# лучше фильтровать в контроллере и не отдавать на страницу вообще #}
+                    {% if user.get_count_notifications_on_moderation %}
+                        <div class="new_requests my_request">
+                            <div class="requests_title">
+                                Взятые в работу запросы на модерацию
+                            </div>
+                            {% for notification in object_list %}
+                                {% if notification.responsible_moderator == user and notification.status != 'R' %}
+                                    <div class="request_wrapper">
+                                        <div class="info">
+                                            <div class="article">
+                                                Запрос на проверку статьи:
+                                                &nbsp;&nbsp; {{ notification.comment_initiator.article_comment }}
+                                            </div>
+                                            <div class="initiator">
+                                                Запрос от пользователя:
+                                                &nbsp;&nbsp; {{ notification.comment_initiator.user }}
+                                            </div>
+                                        </div>
+                                        <div class="buttons">
+                                            <div class="watch">
+                                                {% if notification.comment_initiator.article_comment.blocked %}
+                                                <a href="{% url 'article' notification.comment_initiator.article_comment.pk %}"
+                                                style="pointer-events: none; opacity: .5;">
+                                                    Статья на доработке
+                                                </a>
+                                                {% else %}
+                                                <a href="{% url 'article' notification.comment_initiator.article_comment.pk %}">
+                                                    Просмотреть статью
+                                                </a>
+                                                {% endif %}
+                                            </div>
+                                            <div class="watch">
+                                                <a href="{% url 'moder_not_rev_update' notification.pk %}">
+                                                    Снять с модерации
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if user.get_count_notifications_on_article_for_re_moderation %}
+                        <div class="new_requests my_re_moder_request">
+                            <div class="requests_title">
+                                Взятые в работу запросы на повторную модерацию статьи
+                            </div>
+                            {% for notification in re_moderation_notifications_list %}
+                                {% if notification.responsible_moderator == user and notification.status != 'R' %}
+                                    <div class="request_wrapper">
+                                        <div class="info">
+                                            <div class="article">
+                                                Запрос на проверку статьи: &nbsp;&nbsp; {{ notification.article_for_re_moderation.title }}
+                                            </div>
+                                            <div class="initiator">
+                                                Запрос от пользователя: &nbsp;&nbsp; {{ notification.article_for_re_moderation.user }}
+                                            </div>
+                                        </div>
+                                        <div class="buttons">
+                                            <div class="watch">
+                                                <a href="{% url 'moder_not_re_mod_update' notification.pk %}">
+                                                    Приступить к модерации
+                                                </a>
+                                            </div>
+                                            <div class="close">
+                                                 <form class="form-lock" method="post" enctype="multipart/form-data"
+                                                    action="{% url 'moder_not_re_mod_update' notification.pk %}">
+                                                    {% csrf_token %}
+                                                    <input hidden="true" name="status" value="R">
+                                                    <button type="submit">Закрыть заявку</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    {% if user.userprofile.name %}
+                        <div class="infoLK">
+                            <div class="infoTextLeftLK">
+                                Данная страница предназначена для создания и редактирования статей,
+                                а так же для внесения и изменения информации о себе.
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="infoLK">
+                            <div class="infoTextLeftLK">
+                                Что бы иметь возможность публиковать собственные статьи, необходимо заполнить информацию
+                                о
+                                себе.
+                                Для продолжения работы на сайте необходимо: нажать на кнопку <b>"Заполнить информацию о
+                                себе"</b>
+                                в блоке <b>"Информация о себе"</b> или перейти по ссылке <b>"ЗАПОЛНИТЬ ИНФОРМАЦИЮ О
+                                СЕБЕ"</b> в
+                                меню <b>"Личного кабинета"</b>.
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                {% if user.get_count_notifications_about_blocking %}
+                    <div class="titleImportantNotifications">
+                        <div class="countNotifications">
+                            У Вас есть важные непрочитанные уведомления в количестве
+                            {{ user.get_count_notifications_about_blocking }} шт.
+                        </div>
+                        <div class="showNotifications">
+                            <a class="content_toggle" href="#">Показать уведомления</a>
+                        </div>
+                    </div>
+                    <div class="importantNotifications" style="display: none;">
+                        {% for notification in user.get_notification_about_blocking %}
+                            <div class="itemMessage">
+                                <div class="moderImage">
+                                    <div class="infoModer">
+                                        Написать модератору
+                                    </div>
+                                    <a href="#"><img src={% static "img/moder.jpg" %} alt="avatar"></a>
+                                </div>
+                                <div class="messageWrapper">
+                                    <div class="message">
+                                        {{ notification.message|safe }}
+                                    </div>
+                                    <div class="readMessage">
+                                        <a href="{% url 'message_edit' notification.pk %}">очистить</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if user.get_count_general_user_notification %}
+                    <div class="titleImportantNotifications">
+                        <div class="countNotifications">
+                            У Вас есть непрочитанные уведомления в количестве
+                            {{ user.get_count_general_user_notification }} шт.
+                        </div>
+                        <div class="showNotifications">
+                            <a href="{% url 'warning_all_gen_notify' user.pk %}">Очистить все</a>
+                        </div>
+                        <div class="showNotifications">
+                            <a class="content_toggle_general" href="#">Показать уведомления</a>
+                        </div>
+                    </div>
+                    <div class="importantNotificationsGeneral" style="display: none;">
+                        {% for notification in user.get_general_user_notification %}
+                            <div class="itemMessage">
+                                <div class="moderImage">
+                                    {% if notification.get_user_sender.userprofile.avatar %}
+                                        <a href="{% url 'user_article' notification.sender_notification %}">
+                                            <img src="/media/{{ notification.get_user_sender.userprofile.avatar }}" alt="avatar"></a>
+                                    {% else %}
+                                        <img src="{% static "img/default.png" %}" alt="avatar"></a>
+                                    {% endif %}
+                                </div>
+                                <div class="messageWrapper">
+                                    <div class="message">
+                                        {{ notification.message|safe }}
+                                    </div>
+                                    <div class="readMessage">
+                                        <a href="{% url 'gen_message_edit' notification.pk %}">очистить</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="profileLK">
+                    <div class="blokPersonInfoLK">
+                        <div class="baseInfoBlokLK">
+                            <div class="menuBaseInfoBlokLK">
+                                <ul class="userInfo">
+                                    <li class="title_lk">Учетные данные</li>
+                                    <li class="text">Логин:</li>
+                                    <li> {{ user.username }}</li>
+                                    <li class="text">Почта:</li>
+                                    <li>{{ user.email }}</li>
+
+                                    <div class="buttonInLk">
+                                        <a href="{% url 'user_edit' user.pk %}">Редактировать учётные данные</a>
+                                    </div>
+                                </ul>
+                                <ul class="userInfo">
+                                    {% if user.userprofile.name %}
+                                        <li class="title_lk">Информация о себе</li>
+                                        <li class="text">Имя Фамилия:</li>
+                                        <li>{{ user.userprofile.name }}</li>
+                                        <li class="text">Возраст:</li>
+                                        <li>{{ user.userprofile.birthday|date:"M d, Y" }}</li>
+                                        <li class="text">Краткое описание:</li>
+                                        <li>{{ user.userprofile.bio }}</li>
+                                        <li class="text">Аватар:</li>
+                                        <li>
+                                            <div class="infoBlockAvatar">
+                                                <img src="/media/{{ user.userprofile.avatar }}" alt="avatar">
+                                            </div>
+                                        </li>
+                                        <div class="buttonInLk">
+                                            <a href="{% url 'profile_edit' user.userprofile.id %}">Редактировать
+                                                информацию
+                                                о
+                                                себе</a>
+                                        </div>
+                                    {% else %}
+                                        <div class="buttonInLk">
+                                            <a href="{% url 'profile_edit' user.userprofile.id %}">Заполнить информацию
+                                                о
+                                                себе</a>
+                                        </div>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        $(document).ready(function () {
+            $('.content_toggle').click(function () {
+                $('.importantNotifications').slideToggle(300, function () {
+                    if ($(this).is(':hidden')) {
+                        $('.content_toggle').html('Показать уведомления');
+                        $('.content_toggle').removeClass('open');
+                    } else {
+                        $('.content_toggle').html('Скрыть уведомления');
+                        $('.content_toggle').addClass('open');
+                    }
+                });
+                return false;
+            });
+        });
+
+    </script>
+
+    <script>
+
+        $(document).ready(function () {
+            $('.content_toggle_general').click(function () {
+                $('.importantNotificationsGeneral').slideToggle(300, function () {
+                    if ($(this).is(':hidden')) {
+                        $('.content_toggle_general').html('Показать уведомления');
+                        $('.content_toggle_general').removeClass('open');
+                    } else {
+                        $('.content_toggle_general').html('Скрыть уведомления');
+                        $('.content_toggle_general').addClass('open');
+                    }
+                });
+                return false;
+            });
+        });
+
+    </script>
+{% endblock %}

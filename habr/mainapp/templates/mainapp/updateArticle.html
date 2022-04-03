@@ -1,0 +1,59 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="main">
+    <div class="subNavbarLK">
+        {% include 'mainapp/includes/inc-submenu_lk.html' %}
+    </div>
+    <div class="contentArticleAdd">
+        <div class="mainArticleAdd">
+            {% if user.is_now_banned%}
+                <div class="titleArticleAdd">
+                    Аккаунт заблокирован! <br>
+                    Вы не можете добавлять и редактировать статьи! <br>
+                    Дата окончания блокировки - {{ user.date_end_banned }}
+                </div>
+            {% else %}
+                {% if user.is_authenticated %}
+                {% if user.userprofile.name %}
+                {% if user == object.user or not object %}
+                <div class="titleArticleAdd">
+                    {{title}}
+                </div>
+                <div class="blokPersonInfoLK">
+                    <div class="baseInfoBlokLK">
+                        <form class="form-horizontal" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.media }}
+                            {{ form.as_p }}
+                            <input class="form-control" type="submit" value="Сохранить статью">
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $('#id_user').val('{{ user.pk }}');
+                    });
+
+                </script>
+                {% else %}
+                <div class="titleArticleAdd">
+                    Для редактирования статьи, необходимо авторизоваться как автор статьи
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="titleArticleAdd">
+                    Для добавления статьи необходимо заполнить информацию о себе
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="titleArticleAdd">
+                    Для добавления статьи необходимо авторизоваться
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

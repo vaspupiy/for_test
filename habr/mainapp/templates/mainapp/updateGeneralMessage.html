@@ -1,0 +1,40 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="main">
+    <div class="subNavbarLK">
+        {% include 'mainapp/includes/inc-submenu_lk.html' %}
+    </div>
+    <div class="contentArticleAdd">
+        <div class="mainArticleAdd">
+            <div class="titleArticleAdd">
+                {{title}}
+            </div>
+            <div class="blokPersonInfoLK">
+                <div class="baseInfoBlokLK">
+                    <form class="form-horizontal" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.media }}
+                        {{ form.as_p }}
+                        <input class="form-control" type="submit" value="Переместить в прочитанные">
+                    </form>
+                    <a href="{% url 'lk' %}" class="toLk">Вернуться в личный кабинет</a>
+                </div>
+            </div>
+            <div class="preview">
+                <div class="text_message">
+                    <div class="message_text">
+                       {{ object.message|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#id_is_read').val('True');
+    });
+</script>
+{% endblock %}

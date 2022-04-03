@@ -1,0 +1,24 @@
+{% load static %}
+
+<div class="paginator">
+    {% if page_obj.has_previous %}
+        <div class="pagLeft">
+            <a href="?page={{ page_obj.previous_page_number }}{% if params %}&{{ params }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"><img
+                    src={% static 'img/pagLeft.png' %} alt="left"></a>
+        </div>
+    {% endif %}
+
+    {% for num_page in page_obj.paginator.page_range %}
+        <div class="pagNum" {% if num_page == page_obj.number %}
+             style="text-decoration: underline" {% endif %}>
+            <a href="?page={{ num_page }}{% if params %}&{{ params }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">{{ num_page }}</a>
+        </div>
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <div class="pagRight">
+            <a href="?page={{ page_obj.next_page_number }}{% if params %}&{{ params }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"><img
+                    src={% static 'img/pagRight.png' %} alt="right"></a>
+        </div>
+    {% endif %}
+</div>

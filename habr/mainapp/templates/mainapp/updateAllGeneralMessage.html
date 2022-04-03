@@ -1,0 +1,32 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="main">
+        <div class="subNavbarLK">
+            {% include 'mainapp/includes/inc-submenu_lk.html' %}
+        </div>
+        <div class="contentArticleAdd">
+            <div class="mainArticleAdd">
+                <div class="titleArticleAdd">
+                    {{ title }}
+                </div>
+                <div class="blokPersonInfoLK">
+                    <div class="baseInfoBlokLK">
+                        <a href="{% url 'update_all_gen_notify' user.pk %}" class="toLk_new">Переместить всё в прочитанное</a>
+                        <a href="{% url 'lk' %}" class="toLk">Вернуться в личный кабинет</a>
+                    </div>
+                </div>
+                <div class="preview">
+                    {% for notification in user.get_general_user_notification %}
+                        <div class="text_message">
+                            <div class="message_text">
+                                {{ notification.message|safe }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

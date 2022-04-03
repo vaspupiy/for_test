@@ -1,0 +1,156 @@
+.main-form {
+    height: auto;
+    width: 486px;
+    /* height: 700px;
+    width: 486px; */
+    border: 1px solid;
+    border-radius: 4px;
+    border-color: tomato;
+    background-color: white;
+    margin: 30px auto;
+    box-shadow: 2px 5px 20px grey;
+}
+
+.form-title {
+    align-items: center;
+    text-align: center;
+    height: 42px;
+    width: 390px;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 28px;
+    margin: 5px auto;
+    margin-top: 60px;
+    color: #1E212C;
+}
+
+.form-subtitle {
+    width: 390px;
+    height: 42px;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 150%;
+    text-align: center;
+    color: #787A80;
+    margin: 1px auto;
+    display: true;
+    padding-bottom: 20px;
+}
+
+.error-text {
+    font-family: Lato;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 150%;
+    text-align: center;
+    color: #000000;
+    margin: 15px 10px;
+    border: 1px solid;
+    border-radius: 2px;
+    border-color: #FF3F3A;
+    background-color: rgb(243, 237, 237);
+    padding: 3px;
+    display: flex;
+}
+
+.input-label {
+    width: 150px;
+    height: 21px;
+    margin-bottom: 5px;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 150%;
+    color: #424551;
+}
+
+.form-box {
+    height: 400px;
+    width: 400px;
+    margin: 5px auto;
+
+}
+
+.form-box-login {
+    height: auto;
+    width: 400px;
+    margin: 5px auto;
+    width: 390px;
+}
+
+.input-label {
+    height: 21px;
+    width: 150px;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 150%;
+    color: #424551;
+}
+
+input {
+    height: 44px;
+    width: 390px;
+    left: 0px;
+    top: 29px;
+    border-radius: 4px;
+    background: #FFFFFF;
+    border: 1px solid #D7DADD;
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    text-indent: 10px;
+}
+
+input:focus {
+    box-shadow: 1px 1px 2px grey;
+}
+
+::placeholder {
+    height: 21px;
+    width: 150px;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 150%;
+    color: #9A9CA5;
+}
+
+.form-button {
+    height: 44px;
+    width: 390px;
+    border-radius: 4px;
+    background: linear-gradient(55.95deg, #FF3F3A 0%, #F75E05 100%);
+    margin: 10px 50px;
+
+    font-family: Lato;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 44px;
+    text-align: center;
+    letter-spacing: 0.5px;
+
+    color: #FFFFFF;
+}
+
+.text-under-button {
+    /*height: 30px;*/
+    width: 500px;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 150%;
+    color: #424551;
+    margin: 25px 50px;
+}
+
+a {
+    color: #FF3F3A;
+}

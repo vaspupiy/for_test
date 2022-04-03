@@ -1,0 +1,140 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="main">
+        <div class="title">
+            {{ title }}
+        </div>
+
+        {% include 'mainapp/includes/inc-search-menu.html' %}
+
+        <div class="sidebar">
+            <div class="author-article" {% if author.user.True and user.is_staff %} style="opacity: .5" {% endif %}>
+                <h6 class="author_title">автор</h6>
+                <div class="avatar_and_info">
+                    <div class="avatar">
+                        <img src="/media/{{ author.get_profile.avatar }}" alt="">
+                    </div>
+
+                    <div class="name_and_share">
+                        <h3>{% if author.userprofile.name %}{{ author.userprofile.name }}
+                        {% else %}{{ author.username }}{% endif %}</h3>
+                        <p>{{ author.get_profile.bio }}</p>
+                    </div>
+                </div>
+                <div class="rating_and_share">
+                    <div class="author_rating_box">
+                        <div class="author_rating"> {{ author.get_profile.rating }}</div>
+                        <div class="rating_text">рейтинг</div>
+                    </div>
+                    <div class="share_author">
+                        {% if user.is_authenticated %}
+                            {% if request.user in author.get_profile.stars.all %}
+                                <a {% if user.True %}
+                                    title="Нельзя понизить ранг, аккаунт заблокирован"
+                                {% else %}
+                                    title="Понизить ранг автора"
+                                {% endif %}
+                                    href="{% url 'user_article_star_toggle' author.pk %}">
+                                    <img src={% static "img/chevron_blue.png" %}>
+                                </a>
+                            {% else %}
+                                <a {% if user.True %}
+                                    title="Нельзя повысить ранг, аккаунт заблокирован"
+                                {% else %}
+                                    title="Повысить ранг автора"
+                                {% endif %}
+                                    href="{% url 'user_article_star_toggle' author.pk %}">
+                                    <img src={% static "img/chevron_red.png" %}>
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <img class="img_chevron" title="Авторизуйтесь, чтобы наградить автора"
+                                 src={% static "img/chevron_red.png" %}>
+                        {% endif %}
+                        <div class="count_star">
+                            {{ author.get_profile.stars.count }} ранг
+                        </div>
+                        <a href="https://telegram.org/" target="_blank">
+                            <img src={% static "img/telegram_red.png" %}>
+                        </a>
+                        <a href="https://www.instagram.com/" target="_blank">
+                            <img src={% static "img/instagram_red.png" %}>
+                        </a>
+                        <a href="https://www.facebook.com/" target="_blank">
+                            <img src={% static "img/facebook_red.png" %}>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="publications">
+            <div class="wrapper">
+
+                {% if not object_list %}
+                    <div class="not-search-title" style="margin-top: 30px; margin-left: 370px">
+                        <b>Статьи не найдены.</b> <br>
+                        Измените настройки фильтра.
+                    </div>
+                {% else %}
+
+                    {% for instance_article in object_list %}
+                        <div class="publication">
+                            <div class="image">
+                                <img src={{ instance_article.main_img.url }} alt="{{ instance_article.main_img }}">
+                            </div>
+                            <div class="publicationInfo">
+                                <div class="category">
+                                    {{ instance_article.categories }}
+                                </div>
+                                <div class="divider"></div>
+                                <div class="dateInfo">
+                                    <div class="icon">
+                                        <img src={% static 'img/Calendar.png' %} alt="Calendar">
+                                    </div>
+                                    <div class="date">
+                                        {{ instance_article.created_timestamp|date:"d.m.Y" }}
+                                    </div>
+                                </div>
+                                <div class="divider"></div>
+                                <div class="likeCount">
+                                    <div class="icon">
+                                        <img src={% static 'img/rating.png' %} alt="like">
+                                    </div>
+                                    <div class="number_rating">
+                                        {% if not instance_article.get_rating_by_article_id %}
+                                            0
+                                        {% else %}
+                                            {{ instance_article.get_rating_by_article_id }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="title">
+                                {{ instance_article.title }}
+                            </div>
+                            <div class="descrition">
+                                {{ instance_article.subtitle }}
+                            </div>
+                            <div class="continue ">
+                                <div class="text">
+                                    Читать далее
+                                </div>
+                                <div class="icon">
+                                    <a href="{% url 'article' instance_article.pk %}">
+                                        <img src={% static 'img/Right.png' %} alt="right">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% if object_list %}
+                {% include 'mainapp/includes/inc-pagination.html' %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

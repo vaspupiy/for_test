@@ -1,0 +1,378 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+<script>
+    {% block jquery %}
+    {% endblock %}
+</script>
+
+{% block content %}
+    <div class="main_content container">
+        <div class="article">
+            <div class="post_header">
+                <div class="header_habr">
+                    <img src={% static "img/files.png" %}>
+                    <p class="content_type">Статья</p>
+                    <img src={% static "img/divider.png" %}>
+                    <a class="content_topic"
+                       href="{% url 'category' article.categories.id %}">{{ article.categories }}</a>
+                </div>
+                <h1 class="name_habr">
+                    {{ article.title }}
+                </h1>
+                <div class="habr_information">
+                    <div class="habr_date_creat">
+                        <img src={% static "img/Calendar.png" %}>
+                        <p class="date">{{ article.created_timestamp|date:"d.m.Y г. H:i" }}</p>
+                        <div style="margin-right: 10px">
+                            <img src={% static 'img/rating.png' %} alt="like">
+                        </div>
+                        <div>
+                            {% if not article.get_rating_by_article_id %}
+                                0
+                            {% else %}
+                                {{ article.get_rating_by_article_id }}
+                            {% endif %}
+                            рейтинг статьи
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="image_habr_page">
+                <img src="/media/{{ article.main_img }}">
+            </div>
+            <div class="text_habr_page">
+                <p class="text_bold">
+                    {{ article.subtitle }}
+                </p>
+                <p class="text_normal">
+
+                    {{ article.text |safe }}
+                </p>
+            </div>
+            <div class="tags_and_share">
+                {% if user.is_staff %}
+                    <form method="post" action="{% url 'article_status_update' article.pk %}"
+                          class="delete_article">
+                        {% csrf_token %}
+                        <input hidden="true" name="status" value="D">
+                        <input hidden="true" name="blocked" value="True">
+                        <button type="submit">Вернуть статью на редактирование</button>
+                    </form>
+                {% endif %}
+                <div class="article_likes_and_comments">
+                    <p class="info">Likes and comments:</p>
+                    <div class="info_img">
+                        {% if user.is_authenticated %}
+                            {% if request.user in article.likes.all %}
+                                <a {% if user.is_now_banned %}
+                                    style="opacity: .2" title="Нельзя убрать лайк, Ваш аккаунт заблокирован"
+                                {% else %}
+                                    title="Убрать лайк со статьи"
+                                {% endif %} class="like" href="{{ article.get_like_url }}">
+                                    <img src={% static "img/black_like.png" %}>
+                                </a>
+                            {% else %}
+                                <a {% if user.is_now_banned %}
+                                    style="opacity: .2" title="Нельзя поставить лайк, Ваш аккаунт заблокирован"
+                                {% else %}
+                                    title="Поставить лайк статье"
+                                {% endif %} href="{{ article.get_like_url }}">
+                                    <img src={% static "img/like.png" %}>
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <img title="Авторизуйтесь, чтобы поставить лайк статье" src={% static "img/like.png" %}>
+                        {% endif %}
+                    </div>
+                    <p class="info">{{ article.likes.count }}</p>
+                    <div class="comment"><img src={% static "img/comment.png" %}></div>
+                    <p>{{ article.get_comment_count_by_article_id }}</p>
+                </div>
+            </div>
+
+            {#            ----- ДОБАВЛЕНИЕ КОММЕНТАРИЯ ----  #}
+            <div class="form_add_comment">
+                {% if user.is_authenticated %}
+                    {% if user.is_now_banned %}
+                        <div class="text-under-button">
+                            Аккаунт заблокирован! Вы не можете оставлять лайки и комментарии! <br>
+                            Дата окончания блокировки - {{ user.date_end_banned }}
+                        </div>
+                    {% else %}
+                        <form method="post" enctype="multipart/form-data" action="{% url 'add-comment' %}">
+                            {% csrf_token %}
+                            {{ form.text }}
+                            <input hidden="true" name="user" value="{{ user.id }}">
+                            <input hidden="true" name="article_comment" value="{{ article.id }}">
+                            <button type="submit" class="add_comment_button"> Оставить комментарий</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+
+                    <div class="text-under-button">
+                        Авторизуйтесь, чтобы оставлять лайки и комментарии. <a href="{% url 'auth:login' %}"
+                                                                               class="link">Войти</a>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            {#            ----- КОММЕНТАРИИ ----  #}
+            <div class="comment_box">
+                {% for comment in article.get_comments_by_article_id %}
+                    <div class="comment_views">
+                        <div class="comment_attribute">
+                            <div class="comment_author">
+                                {% if comment.user.userprofile.name %}{{ comment.user.userprofile.name }}
+                                {% else %}{{ comment.user.username }}{% endif %}</div>
+                            <div class="comment_author">{{ comment.created_timestamp|date:"d.m.Y г. H:i" }}</div>
+                        </div>
+                        <div class="comment_text">{{ comment.text }}</div>
+                        <div class="habr_info">
+                            <p class="info">Likes :</p>
+                            <div class="info_img">
+                                {% if user.is_authenticated %}
+                                    {% if request.user in comment.likes.all %}
+                                        <a {% if user.is_now_banned %}
+                                            style="opacity: .2" title="Нельзя убрать лайк, Ваш аккаунт заблокирован"
+                                        {% else %}
+                                            title="Убрать лайк с комментария"
+                                        {% endif %}
+                                            href="{% url 'like_comment_toggle' article.pk comment.id %}">
+                                            <img src={% static "img/black_like.png" %}>
+                                        </a>
+                                    {% else %}
+                                        <a {% if user.is_now_banned %}
+                                            style="opacity: .2" title="Нельзя поставить лайк, Ваш аккаунт заблокирован"
+                                        {% else %}
+                                            title="Поставить лайк комментарию"
+                                        {% endif %}
+                                            href="{% url 'like_comment_toggle' article.pk comment.id %}">
+                                            <img src={% static "img/like.png" %}>
+                                        </a>
+                                    {% endif %}
+                                {% else %}
+                                    <img title="Авторизуйтесь, чтобы поставить лайк комментарию"
+                                         src={% static "img/like.png" %}>
+                                {% endif %}
+                            </div>
+                            <p class="info">{{ comment.likes.count }}</p>
+                            {% if user.is_authenticated %}
+                            <div class="titleImportantNotifications">
+                                <div class="showNotifications">
+                                    <button class="content_toggle form_content{{ comment.pk }} reply_">Ответить</button>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if comment.get_count %}
+                                <div class="titleImportantNotifications">
+                                    <div class="showNotifications">
+                                        <button class="content_toggle content{{ comment.pk }} reply_">Посмотреть ответы ({{ comment.get_count }} шт.)</button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if user.is_staff %}
+                                <form method="post" action="{% url 'comment_delete' comment.pk %}"
+                                      class="delete_comment">
+                                    {% csrf_token %}
+                                    <button type="submit">Удалить комментарий</button>
+                                </form>
+                                <div class="block_author_comment">
+                                    {% if comment.user.is_now_banned %}
+                                        <p class="blocked_author_comment">заблокирован</p>
+                                    {% elif comment.user.is_banned is not True and user.id != comment.user.id %}
+                                        <form method="post"
+                                              action="{% url 'banned_user_toggle' article.pk comment.id %}"
+                                              class="block_author_comment">
+                                            {% csrf_token %}
+                                            <button type="submit">Заблокировать автора</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {#  ----- ОТВЕТ НА КОММЕНТАРИй ----  #}
+                        <div class="form_add_comment">
+                            {% if user.is_authenticated %}
+                                <form class="importantNotifications form{{ comment.pk }}" style="display: none;"
+                                      method="post" enctype="multipart/form-data" action="{% url 'reply-comment' %}">
+                                    {% csrf_token %}
+                                    {{ form.text }}
+                                    <input type="hidden" name="pk" value="{{ object.pk }}">
+                                    <input type="hidden" name="comment_to_reply" value="{{ comment.id }}">
+                                    <input type="hidden" name="user" value="{{ user.id }}">
+                                    <button type="submit" class="add_comment_button"> Ответить</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                        <div class="reply_block">
+                            {% if comment.get_count %}
+                                <div class="importantNotifications {{ comment.pk }}" style="display: none;">
+                                    {% for reply_comment in comment.get_replies_by_comment_id %}
+                                        <div class="comment_views">
+                                            <div class="comment_attribute">
+                                                <div class="comment_author">{{ reply_comment.user.username }}</div>
+                                                <div class="comment_author">{{ reply_comment.created_timestamp|date:"d.m.Y г. H:i" }}</div>
+                                            </div>
+                                            <div class="comment_text">{{ reply_comment.text }}</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                <script>
+                    $(document).ready(function () {
+                        $('.content{{ comment.pk }}').click(function () {
+                            $('.{{ comment.pk }}').slideToggle(300, function () {
+                                if ($(this).is(':hidden')) {
+                                    $('.content{{ comment.pk }}').html('Посмотреть ответы ({{ comment.get_count }} шт.)');
+                                    $('.content{{ comment.pk }}').removeClass('open');
+                                } else {
+                                    $('.content{{ comment.pk }}').html('Скрыть ответы ({{ comment.get_count }} шт.)');
+                                    $('.content{{ comment.pk }}').addClass('open');
+                                }
+                            });
+                            return false;
+                        });
+                    });
+                </script>
+                <script>
+                    $(document).ready(function () {
+                        $('.form_content{{ comment.pk }}').click(function () {
+                            $('.form{{ comment.pk }}').slideToggle(300, function () {
+                                if ($(this).is(':hidden')) {
+                                    $('.form_content{{ comment.pk }}').html('Ответить');
+                                    $('.form_content{{ comment.pk }}').removeClass('open');
+                                } else {
+                                    $('.form_content{{ comment.pk }}').html('Скрыть');
+                                    $('.form_content{{ comment.pk }}').addClass('open');
+                                }
+                            });
+                            return false;
+                        });
+                    });
+                </script>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <form method="get" action="{% url 'search' %}">
+                {{ search_form.query }}
+                <button type="submit"><a class="search_button" href="#"><img src={% static "img/search.png" %}></a>
+                </button>
+            </form>
+            <div class="author" {% if article.user.is_now_banned and user.is_staff %} style="opacity: .5" {% endif %}>
+                <h6 class="author_title">автор</h6>
+                {% if user.is_staff %}
+                    <div class="block_author_article">
+                        {% if article.user.is_now_banned is True %}
+                            <p class="blocked_author_article">заблокирован</p>
+                        {% elif article.user.is_banned is not True and user.id != article.user.id %}
+                            <form method="post" action="{% url 'banned_author_article_toggle' article.pk %}"
+                                  class="block_author_article">
+                                {% csrf_token %}
+                                <button type="submit">Заблокировать автора</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <div class="avatar_and_info">
+                    <div class="avatar">
+                        <img src="/media/{{ article.user.get_profile.avatar }}">
+                    </div>
+                    <div class="name_and_share">
+                        <h3>{% if article.user.userprofile.name %}{{ article.user.userprofile.name }}
+                        {% else %}{{ article.user.username }}{% endif %}</h3>
+                        <p>{{ article.user.get_profile.bio }}</p>
+                    </div>
+                </div>
+                <div class="rating_and_share">
+                    <div class="author_rating_box">
+                        <div class="author_rating">
+                            {{ article.user.get_profile.rating }}
+                        </div>
+                        <div class="rating_text">рейтинг</div>
+                    </div>
+                    <div class="share_author">
+                        {% if user.is_authenticated %}
+                            {% if request.user in article.user.userprofile.stars.all %}
+                                <a {% if user.is_now_banned %}
+                                    style="opacity: .2" title="Нельзя понизить ранг, Ваш аккаунт заблокирован"
+                                {% else %}
+                                    title="Понизить ранг автора"
+                                {% endif %}
+                                    href="{% url 'star_toggle' article.pk %}">
+                                    <img src={% static "img/chevron_blue.png" %}>
+                                </a>
+                            {% else %}
+                                <a {% if user.is_now_banned %}
+                                    style="opacity: .2" title="Нельзя повысить ранг, Ваш аккаунт заблокирован"
+                                {% else %}
+                                    title="Повысить ранг автора"
+                                {% endif %}
+                                    href="{% url 'star_toggle' article.pk %}">
+                                    <img src={% static "img/chevron_red.png" %}>
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <img class="img_chevron" title="Авторизуйтесь, чтобы наградить автора"
+                                 src={% static "img/chevron_red.png" %}>
+                        {% endif %}
+                        <div class="count_star">
+                            {{ article.user.userprofile.stars.count }} ранг
+                        </div>
+                        <a href="https://telegram.org/" target="_blank">
+                            <img src={% static "img/telegram_red.png" %}>
+                        </a>
+                        <a href="https://www.instagram.com/" target="_blank">
+                            <img src={% static "img/instagram_red.png" %}>
+                        </a>
+                        <a href="https://www.facebook.com/" target="_blank">
+                            <img src={% static "img/facebook_red.png" %}>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="trending_articles">
+                {% if article.get_other_articles_by_author %}
+                    <h6 class="trending_articles_title">статьи автора:</h6>
+                    {% for other_article in article.get_other_articles_by_author %}
+                        <div class="img_and_info_habr">
+                            <div class="img_habr">
+                                <img src="/media/{{ other_article.main_img }}" alt="article_img">
+                            </div>
+                            <div class="info_habr">
+                                <div class="habr_date_creat">
+                                    <img src={% static "img/Calendar.png" %}>
+                                    <p class="date">{{ other_article.created_timestamp|date:"d.m.Y г. H:i" }}</p>
+                                </div>
+                                <a href="{% url 'article' other_article.pk %}">{{ other_article.title }}</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="article_by_author">
+                        <a href="{% url 'user_article' article.user.id %}"> Все статьи автора</a>
+                    </div>
+
+                {% endif %}
+            </div>
+            {% if article.tags.all %}
+                <div class="tags_trending">
+                    <h6 class="trending_articles_title">Tags:</h6>
+                    <div class="tags">
+                        {% for tag in article.tags.all %}
+                            <p>#{{ tag }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}

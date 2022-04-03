@@ -1,0 +1,47 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <body>
+    <div class="main-form">
+        <div class="form-title">
+            {{ title }}
+        </div>
+        {% if form.errors %}
+            <div class="error-text">
+                {{ form.errors.as_text }}
+            </div>
+        {% endif %}
+
+        <form class="form-box" method="post" id="registration-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="input-label">
+                Логин
+            </div>
+            {{ form.username }}
+
+            <div class="input-label">
+                Ваш Email
+            </div>
+            {{ form.email }}
+
+            <div class="input-label">
+                Пароль
+            </div>
+            {{ form.password1 }}
+
+            <div class="input-label">
+                Подтверждение пароля
+            </div>
+            {{ form.password2 }}
+        </form>
+        <button type="submit" form="registration-form" class="form-button">Применить изменения</button>
+        <div class="text-under-button">
+
+        </div>
+
+    </div>
+
+    </body>
+{% endblock %}

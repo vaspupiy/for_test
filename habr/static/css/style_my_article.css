@@ -1,0 +1,217 @@
+
+.my-article-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.article-box {
+    width: 390px;
+    left: 345px;
+    top: 761px;
+
+
+    /* white */
+    background: #FFFFFF;
+    /* gray/300 */
+    border: 1px solid #E5E8ED;
+    box-sizing: border-box;
+    border-radius: 4px;
+    margin: 10px;
+    box-shadow: 0px 0px 5px 5px rgba(154, 156, 165, 0.08), 0px 30px 24px -10px rgba(154, 156, 165, 0.05), 0px 12px 10px -6px rgba(154, 156, 165, 0.04), 0px 4px 4px -4px rgba(30, 33, 44, 0.03);
+}
+
+.article-box .info {
+    height: 42px;
+    margin-top: 24px;
+    margin-left: 24px;
+
+/ / styleName: h3;
+    font-size: 18px;
+    font-style: normal;
+    line-height: 42px;
+    text-align: left;
+    color: rgba(120, 122, 128, 1);
+}
+
+.article-title {
+    width: 342px;
+    margin-left: 24px;
+
+/ / styleName: large / bold;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 27px;
+    text-align: left;
+}
+
+.article-prewiev {
+    width: 342px;
+    top: 62px;
+    margin-left: 24px;
+    margin-top: 10px;
+
+/ / styleName: base / regular;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 26px;
+    text-align: left;
+    color: rgba(120, 122, 128, 1);
+}
+
+.article-box .article-button {
+    letter-spacing: 0.5px;
+    margin-top: 42px;
+    margin-left: 24px;
+    margin: 42px 12px 0;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    background-color: white;
+    color: #FF3F3A;
+    text-decoration: none;
+    border: none;
+
+}
+
+.article-box .article-button:hover {
+    text-decoration: underline;
+}
+
+.article-box .button-box {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 34px;
+}
+
+.article-box .button-box .reModer {
+    margin: 16px 0 0;
+    padding: 10px 10px;
+    border-radius: 5px;
+    background: rgba(3, 206, 164, 1);
+    font-size: 16px;
+    color: #FFFFFF;
+    opacity: .7;
+}
+
+.article-box .info-block {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 15px;
+}
+
+.article-box .article-tags{
+    display: flex;
+    flex-direction: row;
+}
+
+.article-box .status {
+    height: 28px;
+    width: 91px;
+    border-radius: 4px;
+
+    font-size: 16px;
+    font-style: normal;
+    line-height: 26px;
+    margin-left: 24px;
+    margin-top: 20px;
+    color: rgba(255, 255, 255, 1);
+    background: rgba(3, 206, 164, 1);
+    text-align: center;
+}
+
+.article-box .category {
+    height: 26px;
+    border-radius: 4px;
+    border: 1px solid rgba(120, 122, 128, 1);
+
+
+    font-size: 16px;
+    font-style: normal;
+    line-height: 26px;
+    margin-left: 24px;
+    margin-top: 20px;
+    color: rgba(120, 122, 128, 1);
+    background: white;
+    text-align: center;
+    padding-left: 9px;
+    padding-right: 9px;
+
+}
+
+/* Popup container */
+.popup {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* The actual popup (appears on top) */
+.popup .popuptext {
+    visibility: hidden;
+    width: 160px;
+    height: 90px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -80px;
+}
+
+/* Popup arrow */
+.popup .popuptext::after {
+    content: "";
+    display: inline;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup .show {
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity:1 ;}
+}
+
+.button-box {
+    display: flex;
+    justify-content: center;
+}
+
+.popup-button {
+    margin-right: 10px;
+    height: 20px;
+    width: 50px;
+
+    font-style: normal;
+    margin-top: 20px;
+    background: white;
+    text-align: center;
+    border: 1px solid rgba(120, 122, 128, 1);
+    border-radius: 4px;
+    font-size: 14px;
+    padding-bottom: 2px;
+
+}

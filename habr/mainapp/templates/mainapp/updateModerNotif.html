@@ -1,0 +1,69 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="main">
+    <div class="subNavbarLK">
+        {% include 'mainapp/includes/inc-submenu_lk.html' %}
+    </div>
+    <div class="contentArticleAdd">
+        <div class="mainArticleAdd">
+            {% if user.is_staff %}
+            <div class="titleArticleAdd">
+                {{title}}
+            </div>
+            <div class="blokPersonInfoLK">
+                <div class="baseInfoBlokLK">
+                    <form class="form-horizontal" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.media }}
+                        {{ form.as_p }}
+                        <input class="form-control" type="submit" value="Взять на модерацию">
+                    </form>
+                    <a href="{% url 'lk' %}" class="toLk">Вернуться в личный кабинет</a>
+                </div>
+            </div>
+            <div class="preview">
+                <div class="text_comment">
+                    <h4 class="comment_title">Текст комментария: </h4>
+                    <p class="comment_text">
+                       {{ object.comment_initiator.text }}
+                    </p>
+                </div>
+                <h1 class="name_habr">
+                    {{ object.comment_initiator.article_comment.title }}
+                </h1>
+                <div class="habr_information">
+                    <div class="habr_date_creat">
+                        <img src={% static "img/Calendar.png" %}>
+                        <p class="date">
+                            {{ object.comment_initiator.article_comment.created_timestamp |date:"d.m.Y"}}</p>
+                    </div>
+                </div>
+                <div class="image_habr_page">
+                    <img src="/media/{{ object.comment_initiator.article_comment.main_img }}">
+                </div>
+                <div class="text_habr_page">
+                    <h3 class="text_bold">
+                        {{ object.comment_initiator.article_comment.subtitle }}
+                    </h3>
+                    <p class="text_normal">
+                        {{ object.comment_initiator.article_comment.text |safe }}
+                    </p>
+                </div>
+            </div>
+            {% else %}
+            <div class="titleArticleAdd">
+                Доступно только для модератора
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#id_responsible_moderator').val('{{ user.pk }}');
+        $('#id_status').val('A');
+    });
+</script>
+{% endblock %}

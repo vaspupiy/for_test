@@ -1,0 +1,12 @@
+<ul class="menu">
+    <li class="home">
+        <a href="{% url 'main' %}" {% if request.path  == "/" %}
+           style="color: red; opacity: 1; border: 1px solid #FF3F3A;" {% endif %}>Главная</a>
+    </li>
+    {% for categories in categories_list %}
+        <li>
+            <a href="{% url 'category' categories.id %}" {% if categories_pk == categories.id %}
+               style="color: red; opacity: 1; border: 1px solid #FF3F3A;" {% endif %}>{{ categories.name }}</a>
+        </li>
+    {% endfor %}
+</ul>

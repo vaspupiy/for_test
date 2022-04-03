@@ -1,0 +1,86 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="main">
+    <div class="subNavbarLK">
+        {% include 'mainapp/includes/inc-submenu_lk.html' %}
+    </div>
+    <div class="contentArticleAdd">
+        <div class="mainArticleAdd">
+            {% if user.is_staff %}
+            <div class="titleArticleAdd">
+                {{title}}
+            </div>
+            <div class="blokPersonInfoLK">
+                <div class="baseInfoBlokLK">
+                    {% if object.responsible_moderator and user == object.responsible_moderator %}
+                        {% if object.article_for_re_moderation.blocked %}
+                         <form class="form-horizontal unlock" method="post" enctype="multipart/form-data"
+                            action="{% url 'article_status_update' object.article_for_re_moderation.pk %}">
+                            {% csrf_token %}
+                            <input hidden="true" name="status" value="A">
+                            <input hidden="true" name="blocked" value="False">
+                            <button type="submit">Снять блокировку</button>
+                        </form>
+                        {% endif %}
+                        <form class="form-horizontal reject" method="post" enctype="multipart/form-data"
+                            action="{% url 'article_status_update' object.article_for_re_moderation.pk %}">
+                            {% csrf_token %}
+                            <input hidden="true" name="status" value="D">
+                            <input hidden="true" name="blocked" value="True">
+                            {% if object.article_for_re_moderation.blocked %}
+                            <button type="submit">Отклонить запрос на снятие блокировки</button>
+                            {% else %}
+                            <button type="submit">Вернуть ошибочно снятую блокировку</button>
+                            {% endif %}
+                        </form>
+                    {% else %}
+                    <form class="form-horizontal" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.media }}
+                        {{ form.as_p }}
+                        <input class="form-control" type="submit" value="Взять на модерацию">
+                    </form>
+                    {% endif %}
+                    <a href="{% url 'lk' %}" class="toLk">Вернуться в личный кабинет</a>
+                </div>
+            </div>
+            <div class="preview">
+                <h1 class="name_habr">
+                    {{ object.article_for_re_moderation.title }}
+                </h1>
+                <div class="habr_information">
+                    <div class="habr_date_creat">
+                        <img src={% static "img/Calendar.png" %}>
+                        <p class="date">
+                            {{ object.article_for_re_moderation.created_timestamp |date:"d.m.Y"}}</p>
+                    </div>
+                </div>
+                <div class="image_habr_page">
+                    <img src="/media/{{ object.article_for_re_moderation.main_img }}">
+                </div>
+                <div class="text_habr_page">
+                    <h3 class="text_bold">
+                        {{ object.article_for_re_moderation.subtitle }}
+                    </h3>
+                    <p class="text_normal">
+                        {{ object.article_for_re_moderation.text |safe }}
+                    </p>
+                </div>
+            </div>
+            {% else %}
+            <div class="titleArticleAdd">
+                Доступно только для модератора
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#id_responsible_moderator').val('{{ user.pk }}');
+        $('#id_status').val('A');
+    });
+</script>
+{% endblock %}

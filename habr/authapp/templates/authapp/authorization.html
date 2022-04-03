@@ -1,0 +1,42 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <body>
+    <div class="main-form">
+        <div class="form-title">
+            Авторизация
+        </div>
+        <div class="form-subtitle">
+            Войди под своим логином  <br>
+            и получи права на использование полного функционала сайта!
+        </div>
+        {% if form.errors %}
+            <div class="error-text">
+                {{ form.non_field_errors.as_text }}
+            </div>
+        {% endif %}
+
+        <form class="form-box-login" method="post" id="login-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="input-label">
+                Логин
+            </div>
+            {{ form.username }}
+
+            <div class="input-label">
+                Пароль
+            </div>
+            {{ form.password }}
+
+        </form>
+        <button type="submit" form="login-form" class="form-button">Войти</button>
+        <div class="text-under-button">
+            Нет аккаунта? <a href="{% url 'auth:registration' %}" class="link">Регистрация</a>
+        </div>
+
+    </div>
+
+    </body>
+{% endblock %}

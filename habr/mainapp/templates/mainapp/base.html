@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% if title %}
+            {{ title }}
+        {% else %}
+            diploma-project
+        {% endif %}
+    </title>
+    {% block css %}
+        <link rel="stylesheet" type="text/css" href={% static 'css/style.css' %}>
+        <link rel="stylesheet" type="text/css" href={% static 'css/style_registration_page.css' %}>
+        <link rel="stylesheet" type="text/css" href={% static 'css/style_search_page.css' %}>
+        <link rel="stylesheet" type="text/css" href={% static 'css/style_my_article.css' %}>
+        <link rel="stylesheet" type="text/css" href={% static 'css/style_404.css' %}>
+    {% endblock %}
+
+    {% block js %}
+        <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+        <script src="{% static 'js/script_api_like.js' %}"></script>
+    {% endblock %}
+</head>
+
+<body>
+<div class="main-wrapper">
+    <div class="top-main">
+        {% block menu %}
+            <div class="topNavbar">
+                <div class="logo">
+                    <img src={% static 'img/logo.png' %} alt="logo">
+                </div>
+                {% include 'mainapp/includes/inc-menu.html' %}
+                <div class="accaunt">
+                    {% if user.is_authenticated %}
+                        {% if user.get_notification_about_blocking.count or user.get_count_notifications_on_moderation or user.get_count_general_user_notification != 0 %}
+                            <a title="Есть новые уведомления" href="{% url 'lk' %}"><img class="shake_img" src={% static "img/notifications_black.png" %}></a>
+                        {% else %}
+                            <a title="Новых уведомлений нет"href="#"><img src={% static "img/notifications.png" %}></a>
+                        {% endif %}
+                        <div class="profile">
+                            <img src={% static 'img/Profile.png' %} alt="Profile">
+                        </div>
+                            <div class="personalAccount">
+                                <a href="{% url 'lk' %}"> {% if user.userprofile.name %}{{ user.userprofile.name }}
+                                {% else %}{{ user.username }}{% endif %}</a>
+                                /&nbsp;&nbsp;
+                                <a href="{% url 'auth:logout' %}">Exit</a>
+                            </div>
+                    {% else %}
+                        <div class="profile">
+                            <img src={% static 'img/Profile.png' %} alt="Profile">
+                        </div>
+                        <div class="loginRegister">
+                            <a href="{% url 'auth:login' %}">Login</a>
+                            &nbsp;/&nbsp;
+                            <a href="{% url 'auth:registration' %}"> Register</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endblock %}
+        <div class="content">
+            {% block content %}
+
+            {% endblock %}
+        </div>
+    </div>
+    {% block footer %}
+        <div class="main-footer">
+            <div class="topFooter">
+                <div class="wrapper">
+                    <div class="aboutUs">
+                        <div class="logo">
+                            <img src={% static 'img/logo.png' %} alt="logo">
+                        </div>
+
+                        <div class="desc">
+                            Мы собрались в рамках курса «Командная разработка по методологии Agile: SCRUM». <br>
+                            Цель - получение необходимых знаний о командной работе
+                            и проектной деятельности c использованием Agile подхода и фреймворка Scrum, а так же
+                            закрепления и углубления знаний, полученных на предыдущих курсах.
+                        </div>
+                        <div class="socialNetworks">
+                            <a target="_blank" href="https://www.facebook.com/"><img
+                                    src={% static 'img/Facebook.png' %} alt="facebook"></a>
+                            <a target="_blank" href="https://www.instagram.com/"><img
+                                    src={% static 'img/Instagram.png' %} alt="instagram"></a>
+                            <a target="_blank" href="https://telegram.org/"><img
+                                    src={% static 'img/telegram.png' %} alt="telegram"></a>
+                            <a target="_blank" href="https://www.youtube.com/"><img
+                                    src={% static 'img/YouTube.png' %} alt="yuoTube"></a>
+                            <a target="_blank" href="https://twitter.com/"><img
+                                    src={% static 'img/Twitter.png' %} alt="twitter"></a>
+                            <a target="_blank" href="https://www.linkedin.com/"><img
+                                    src={% static 'img/Linked-In.png' %} alt="liked-in"></a>
+                        </div>
+                    </div>
+                    <div class="siteMap">
+                        <div class="title">
+                            SITE MAP
+                        </div>
+                        <ul class="menu">
+                            <li class="home">
+                                <a href="{% url 'main' %}">Главная</a>
+                            </li>
+                            {% for categories in categories_list %}
+                                <li>
+                                    <a href="{% url 'category' categories.id %}">{{ categories.name }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                    </div>
+                    <div class="team">
+                        <div class="title">
+                            Team:
+                        </div>
+                        <div class="players">
+                            <div class="player">
+                                <a target="_blank" href="https://tlgg.ru/@trubinart">Артем</a>
+                            </div>
+                            <div class="player">
+                                <a target="_blank" href="https://tlgg.ru/@Vaspupiy">Вася</a>
+                            </div>
+                            <div class="player">
+                                <a target="_blank" href="https://tlgg.ru/@veyu0">Вера</a>
+                            </div>
+                            <div class="player">
+                                <a target="_blank" href="https://tlgg.ru/@xvector">Евгений</a>
+                            </div>
+                            <div class="player">
+                                <a target="_blank" href="https://tlgg.ru/@ithesand">Юрий</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contactUs">
+                        <div class="title">
+                            CONTACT US
+                        </div>
+                        <div class="phone">
+                            <div class="icon">
+                                <img src={% static 'img/iPhone.png' %} alt="iPhone">
+                            </div>
+                            <div class="text">
+                                (405) 555-0128
+                            </div>
+                        </div>
+                        <div class="mail">
+                            <div class="icon">
+                                <img src={% static 'img/Mail.png' %} alt="Mail">
+                            </div>
+                            <div class="text">
+                                <a href="mailto:test@test.com">test@test.com</a>
+                            </div>
+                        </div>
+                    </div>
+                    {#                <div class="subscribe">#}
+                    {#                    <div class="title">#}
+                    {#                        SIGN UP TO OUR NEWSLETTER#}
+                    {#                    </div>#}
+                    {#                    <div class="subsForm">#}
+                    {#                        <form>#}
+                    {#                            <input type="text" placeholder="Email address">#}
+                    {#                            <button type="submit"></button>#}
+                    {#                        </form>#}
+                    {#                    </div>#}
+                    {#                    <div class="desc">#}
+                    {#                        *Subscribe to our newsletter to receive communications and early updates from Team Number#}
+                    {#                        Two SEO Agency.#}
+                    {#                    </div>#}
+                    {#                </div>#}
+                </div>
+            </div>
+            <div class="bottomFooter">
+                <div class="wrapper">
+                    <div class="madeWith">
+                        <div class="text">
+                            © All rights reserved. Made with
+                        </div>
+                        <div class="image">
+                            <img src={% static 'img/heart.png' %} alt="Heart">
+                        </div>
+                        <div class="text">
+                            by Team Number Two
+                        </div>
+                    </div>
+                    <div class="goToTop">
+                        <a href="#" title="Вернуться к началу" class="topbutton">GO TO TOP</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+</div>
+<script>
+    var popup1 = document.getElementById("popup-1")
+    var openPopup1 = document.getElementById("open-popup-1")
+    var closePopup1 = document.getElementById('close-popup-1')
+
+    openPopup1.addEventListener('click', () => {
+        popup1.style.display = "block";
+    })
+
+    closePopup1.addEventListener('click', () => {
+        popup1.style.display = "none";
+    })
+</script>
+</body>
+
+</html>

@@ -1,0 +1,86 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="main">
+        <div class="subNavbarLK">
+            {% include 'mainapp/includes/inc-submenu_lk.html' %}
+        </div>
+        <div class="contentLK">
+            <div class="mainLK">
+                <div class="titleLK">
+                    Редактирование страницы на сайте
+                </div>
+                <div class="infoLK">
+                    <div class="infoTextLeftLK">
+                        Информацию на этой странице будут видеть пользователи сайта — твои потенциальные
+                        клиенты. Отнесись к ее заполнению
+                        ответственно.
+                    </div>
+                    <div class="infoTextRightLK">
+                        <a href="#">Как выглядит моя страница?</a>
+                    </div>
+                </div>
+                <div class="profileLK">
+                    <div class="menuProfileLK">
+                        <ul class="menuPrLK">
+                            <li class="persInfoLK"><a href="#">Персональная информация</a></li>
+                        </ul>
+
+                    </div>
+                    <hr class="profileHrLK" style="height: 1px;background-color: #DBE7FF;color: #DBE7FF;">
+                    <div class="blokPersonInfoLK">
+                        <div class="baseInfoBlokLK">
+                            <div class="menuBaseInfoBlokLK">
+                                <ul class="menuPrLK">
+                                    <li class="baseInfoTitleLK">Основная информация</li>
+                                </ul>
+                            </div>
+                            {% if form.errors %}
+                                <div class="error-text-lk">
+                                    {{ form.errors.as_text }}
+                                </div>
+                            {% endif %}
+                            <hr class="profileHrLK" style="height: 1px;background-color: #DBE7FF;color: #DBE7FF;">
+                            <form class="baseBlokLK" method="post" id="lk-form" action=""
+                                  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="blokFirstName">
+                                    <div class="FirstName">
+                                        Имя Фамилия
+                                    </div>
+                                    <div class="fieldName">
+                                        {{ form.birthday }}
+                                        {{ forms.name }}
+                                        {{ form.name }}
+                                        {{ form.name }}
+                                    </div>
+                                </div>
+
+                                <div class="blokBirthdate">
+                                    <div class="Birthdate">
+                                        Возраст
+                                    </div>
+                                    <div class="fieldName">
+                                        {{ form.birthday }}
+                                    </div>
+                                </div>
+                                <div class="blokShortDescription">
+                                    <div class="shortDescription">
+                                        Краткое описание
+                                    </div>
+                                    <div class="fieldName">
+                                        {{ form.bio }}
+                                    </div>
+                                </div>
+                                <div class="blokButton">
+                                    <input class="form-control" type="submit" value="сохранить изменения"/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

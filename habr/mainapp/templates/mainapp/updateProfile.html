@@ -1,0 +1,26 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="main">
+        <div class="contentArticleAdd">
+            <div class="mainArticleAdd">
+                <div class="blokPersonInfoLK">
+                    <div class="baseInfoBlokLK">
+
+                        <form class="form-horizontal" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                        {{ form.as_p }}
+                            {% if user.userprofile.avatar %}
+                                <div class="form-avatar"><img src="/media/{{ user.userprofile.avatar }}" alt="avatar">
+                                </div>
+                            {% endif %}
+                            <input class="form-control" type="submit" value="Сохранить">
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

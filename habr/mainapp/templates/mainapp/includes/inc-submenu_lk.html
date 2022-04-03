@@ -1,0 +1,40 @@
+{% load static %}
+{% if user.is_authenticated %}
+    <div class="avatar">
+        <div class="fioLK">
+            <div class="avatarLk">
+                {% if user.userprofile.avatar %}
+                    <a href="{% url 'lk' %}" title="Профиль пользователя">
+                        <img src="/media/{{ user.userprofile.avatar }}" alt="avatar">
+                    </a>
+                {% else %}
+                    <a href="{% url 'lk' %}" title="Профиль пользователя">
+                        <img src="/media/user_avatars/default.png" alt="avatar">
+                    </a>
+                {% endif %}
+            </div>
+            <a href="{% url 'lk' %}">{% if user.userprofile.name %}{{ user.userprofile.name }}
+            {% else %}{{ user.username }}{% endif %}</a>
+        </div>
+        {% if user.userprofile.name %}
+            <div class="configLK">
+                <a href="{% url 'article_create' %}">Создать статью</a>
+            </div>
+            <div class="configLK">
+                <a href="{% url 'my_articles' user.pk %}">Редактирование статей </a>
+            </div>
+        {% else %}
+            <div class="configLK">
+                <a href="{% url 'profile_edit' user.userprofile.pk %}">Заполнить информацию о себе</a>
+            </div>
+        {% endif %}
+    </div>
+    <div class="menuLK">
+        <div class="exitLK"><a href="#">
+            <a href="{% url 'auth:logout' %}">
+                <img src="{% static 'img/exit.png' %}" alt="выход">выйти из кабинета
+            </a>
+        </div>
+    </div>
+{% endif %}
+

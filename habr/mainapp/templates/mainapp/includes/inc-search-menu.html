@@ -1,0 +1,107 @@
+{% load static %}
+
+<div class="menu">
+
+    <div class="sort-filter-box">
+        <div class="side">
+            <div class="sort">
+                <div class="title">
+                    Фильтровать:
+                </div>
+                <form method="get" action="{{ request.path }}"
+                      class="filter-box">
+                    <div class="subtitle">Дата
+                        <input type="date" class="date" name="start_date" {% if start_date %}
+                               value="{{ start_date|date:"Y-m-d" }}" {% endif %}>
+                        <input type="date" class="date" name="end_date" {% if end_date %}
+                               value="{{ end_date|date:"Y-m-d" }}" {% endif %}>
+                    </div>
+
+                    <div class="subtitle">Рейтинг
+                        <input type="number" class="rating" placeholder="от" name="start_rating" min="0" max="500"
+                               step="1"
+                                {% if start_rating %}
+                               value="{{ start_rating }}" {% endif %}>
+                        <input type="number" class="rating" placeholder="до" name="end_rating" min="0" max="500"
+                               step="1"
+                                {% if end_rating %}
+                               value="{{ end_rating }}" {% endif %}>
+                        {% if sort %}
+                            <input type="text" hidden="hidden" name="sort" value="{{ sort }}">
+                        {% endif %}
+                        {% if query %}
+                            <input type="text" hidden="hidden" name="query" value="{{ query }}">
+                        {% endif %}
+                    </div>
+                    <button type="submit">Фильтровать</button>
+                </form>
+                <form method="get" action="{{ request.path }}" class="">
+                    {% if query %}
+                        <input type="text" hidden="hidden" name="query" value="{{ query }}">
+                    {% endif %}
+                    <button type="submit">Сбросить</button>
+                </form>
+
+            </div>
+        </div>
+        <div class="side">
+            <div class="sort">
+                <div class="title">
+                    Сортировать:
+                </div>
+                <div class="sortDate">
+                    {% if not sort %}
+                        <a class="text"
+                           href="{{ request.path }}?sort=date_reverse{% if params %}&{{ params }}{% endif %}"
+                           style="color: #FF3F3A; text-decoration: underline">по дате</a>
+                        <img src="https://img.icons8.com/ios/13/fa314a/double-down--v1.png"/>
+                    {% elif sort == 'date_reverse' %}
+                        <a class="text" href="{{ request.path }}{% if params %}?{{ params }}{% endif %}"
+                           style="color: #FF3F3A; text-decoration: underline">по
+                            дате</a>
+                        <img src="https://img.icons8.com/ios/13/fa314a/double-up.png"/>
+                    {% else %}
+                        <a class="text" href="{{ request.path }}{% if params %}?{{ params }}{% endif %}">по дате</a>
+                    {% endif %}
+
+                </div>
+                <div class="sortDate">
+                    {% if not sort or sort == 'date_reverse' %}
+                        <a class="text"
+                           href="{{ request.path }}?sort=rating{% if params %}&{{ params }}{% endif %}">по
+                            рейтингу</a>
+                    {% elif sort == 'rating' %}
+                        <a class="text"
+                           href="{{ request.path }}?sort=rating_reverse{% if params %}&{{ params }}{% endif %}"
+                           style="color: #FF3F3A; text-decoration: underline">по рейтингу</a>
+                        <img src="https://img.icons8.com/ios/13/fa314a/double-down--v1.png"/>
+                    {% elif sort == 'rating_reverse' %}
+                        <a class="text" href="{{ request.path }}?sort=rating{% if params %}&{{ params }}{% endif %}"
+                           style="color: #FF3F3A; text-decoration: underline">по рейтингу</a>
+                        <img src="https://img.icons8.com/ios/13/fa314a/double-up.png"/>
+                    {% endif %}
+                </div>
+
+                <div class="count_article">
+                    {% if start_date or end_date or start_rating or end_rating %}
+                        Отфильтровано статей: {{ page_obj.paginator.count }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="side">
+        <div class="search">
+            <form method="get" action="{% url 'search' %}">
+                {{ search_form.query }}
+                <button type="submit"></button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+
+
