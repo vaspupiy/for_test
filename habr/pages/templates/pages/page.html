@@ -1,0 +1,14 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+<script>
+    {% block jquery %}
+    {% endblock %}
+
+</script>
+
+{% block content %}
+
+    {{content.content|safe}}
+
+{% endblock %}

@@ -42,7 +42,6 @@ urlpatterns = [
 
     path('ModerNotRev-update/<str:pk>/', ModeratorNotificationReviewedUpdate.as_view(), name='moder_not_rev_update'),
 
-
     path('add-comment/', CreateCommentView.as_view(), name='add-comment'),
     path('reply-comment/', ReplyCommentView.as_view(), name='reply-comment'),
     path('category/<str:pk>/', CategoriesListView.as_view(), name='category'),
@@ -69,7 +68,8 @@ urlpatterns = [
 
     path('warning-all-gen-notify/<str:pk>/', AllGeneralNotificationUserView.as_view(), name='warning_all_gen_notify'),
     path('update-all-gen-notify/<str:pk>/', AllGeneralNotificationUserUpdate.as_view(), name='update_all_gen_notify'),
-    path('qr/', qr, name='qr-generator')
+    path('qr/', qr, name='qr-generator'),
+    path('pages/', include('pages.urls', namespace='pages')),
 ]
 
 handler404 = PageNotFountView.as_view()

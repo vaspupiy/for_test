@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'taggit',
     'mptt',
     'django_mptt_admin',
-    'qrgenerator'
+    'qrgenerator',
+    'pages'
 ]
 
 MIDDLEWARE = [
